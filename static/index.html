@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Private Chat</title>
+
+<style>
+body{margin:0;font-family:Arial;background:#f2f2f2;display:flex;flex-direction:column;height:100vh}
+#chat{flex:1;overflow:auto;padding:12px}
+.row{margin:8px 0}
+.me{text-align:right}
+.bubble{display:inline-block;padding:10px 14px;border-radius:14px;max-width:75%}
+.mine{background:#cfe6ff}
+.other{background:#e4e4e4}
+.system{text-align:center;color:#777;font-size:12px}
+.time{font-size:10px;color:#666;margin-top:3px}
+
+#bar{display:flex;padding:10px;background:white;border-top:1px solid #ddd}
+input{flex:1;padding:12px;border-radius:10px;border:1px solid #ccc;font-size:16px}
+button{margin-left:6px;padding:12px 14px;border:none;border-radius:10px;background:#007bff;color:white}
+
+/* username screen */
+#nameScreen{
+position:fixed;inset:0;background:#f2f2f2;
+display:flex;align-items:center;justify-content:center;
+}
+
+#nameCard{
+background:white;
+padding:30px 28px;
+border-radius:16px;
+box-shadow:0 8px 30px rgba(0,0,0,0.1);
+display:flex;
+flex-direction:column;
+gap:14px;
+width:90%;
+max-width:320px;
+text-align:center;
+}
+
+#nameCard input{
+padding:12px;
+border-radius:10px;
+border:1px solid #ccc;
+font-size:16px;
+}
+
+#nameCard button{
+padding:12px;
+border:none;
+border-radius:10px;
+background:#007bff;
+color:white;
+font-size:15px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="nameScreen">
+  <div id="nameCard">
+    <h3 style="margin:0">Enter your name</h3>
+    <input id="nameInput" placeholder="Your name"/>
+    <button onclick="startChat()">Join Chat</button>
+  </div>
+</div>
+
+<div id="chat"></div>
+
+<div id="bar">
+  <input id="msg" placeholder="Type a message 😊"/>
+  <button onclick="send()">Send</button>
+</div>
+
+<script>
+let username="";
+let ws;
+
+const chat=document.getElementById("chat");
+const input=document.getElementById("msg");
+
+function startChat(){
+  username=document.getElementById("nameInput").value.trim()||"User";
+  document.getElementById("nameScreen").style.display="none";
+
+  ws=new WebSocket(
+   (location.protocol==="https:"?"wss://":"ws://")+location.host+"/ws"
+  );
+
+  ws.onopen=()=>ws.send(username);
+  ws.onmessage=(e)=>renderMessage(JSON.parse(e.data));
+}
+
+function renderMessage(m){
+ const row=document.createElement("div");
+ row.className="row";
+
+ if(m.type==="system"){
+   row.className="system";
+   row.textContent=`[${m.time}] ${m.text}`;
+ }
+ else{
+   const b=document.createElement("div");
+   b.className="bubble";
+
+   if(m.user===username){
+     row.classList.add("me");
+     b.classList.add("mine");
+   } else b.classList.add("other");
+
+   b.innerHTML=`<b>${m.user}</b><br>${m.text}
+       <div class="time">${m.time}</div>`;
+
+   row.appendChild(b);
+ }
+
+ chat.appendChild(row);
+ chat.scrollTop=chat.scrollHeight;
+}
+
+function send(){
+ if(!input.value.trim()) return;
+ ws.send(input.value);
+ input.value="";
+}
+
+input.addEventListener("keypress",(e)=>{
+ if(e.key==="Enter") send();
+});
+</script>
+
+</body>
+</html>
