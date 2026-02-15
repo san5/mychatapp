@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Private Chat</title>
+<title>Just Us ❤️</title>
 
 <style>
 body{margin:0;font-family:Arial;background:#f2f2f2;display:flex;flex-direction:column;height:100vh}
@@ -19,7 +19,7 @@ body{margin:0;font-family:Arial;background:#f2f2f2;display:flex;flex-direction:c
 input{flex:1;padding:12px;border-radius:10px;border:1px solid #ccc;font-size:16px}
 button{margin-left:6px;padding:12px 14px;border:none;border-radius:10px;background:#007bff;color:white}
 
-/* username screen */
+/* name screen */
 #nameScreen{
 position:fixed;inset:0;background:#f2f2f2;
 display:flex;align-items:center;justify-content:center;
@@ -38,21 +38,16 @@ max-width:320px;
 text-align:center;
 }
 
-#nameCard input{
-padding:12px;
-border-radius:10px;
-border:1px solid #ccc;
-font-size:16px;
-}
-
-#nameCard button{
+.nameBtn{
 padding:12px;
 border:none;
 border-radius:10px;
-background:#007bff;
-color:white;
 font-size:15px;
+cursor:pointer;
 }
+
+#btn1{background:#007bff;color:white}
+#btn2{background:#ff6b9d;color:white}
 </style>
 </head>
 
@@ -60,9 +55,13 @@ font-size:15px;
 
 <div id="nameScreen">
   <div id="nameCard">
-    <h3 style="margin:0">Enter your name</h3>
-    <input id="nameInput" placeholder="Your name"/>
-    <button onclick="startChat()">Join Chat</button>
+    <h3 style="margin:0">Just Us ❤️</h3>
+    <p style="margin:0;color:#666">Who’s here?</p>
+
+    <!-- CHANGE NAMES HERE -->
+    <button id="btn2" class="nameBtn" onclick="startChat('Jul')">Jul</button>
+    <button id="btn1" class="nameBtn" onclick="startChat('Dee')">Dee</button>
+
   </div>
 </div>
 
@@ -80,8 +79,8 @@ let ws;
 const chat=document.getElementById("chat");
 const input=document.getElementById("msg");
 
-function startChat(){
-  username=document.getElementById("nameInput").value.trim()||"User";
+function startChat(name){
+  username=name;
   document.getElementById("nameScreen").style.display="none";
 
   ws=new WebSocket(
