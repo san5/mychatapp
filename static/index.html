@@ -88,6 +88,10 @@ function startChat(name){
   );
 
   ws.onopen=()=>ws.send(username);
+  setTimeout(() => {
+  chat.scrollTop = chat.scrollHeight;
+  }, 100);
+
   ws.onmessage=(e)=>renderMessage(JSON.parse(e.data));
 }
 
